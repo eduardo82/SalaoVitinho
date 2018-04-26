@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:id="@+id/scrollMensagem">
+        <LinearLayout
+            android:id="@+id/linearLayoutMensageiro"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+        </LinearLayout>
+    </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:focusable="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:focusableInTouchMode="true"
+        android:layout_marginBottom="6dp"
+        android:layout_marginTop="5dp"
+        android:id="@+id/linear_mmensagem">
+        <EditText
+            android:id="@+id/editTextMensagem"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_weight="0.5"
+            android:ems="10"
+            android:inputType="textMultiLine"
+            android:paddingLeft="10dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:background="@drawable/round_input" />
+
+        <Button
+            android:id="@+id/btnCriarMensagem"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_weight="0.5"
+            android:textColor="#FFFFFF"
+            android:layout_marginRight="3dp"
+            android:layout_marginLeft="3dp"
+            android:background="@drawable/round_button"
+            android:text=">>" />
+    </LinearLayout>
+</LinearLayout>
+
+

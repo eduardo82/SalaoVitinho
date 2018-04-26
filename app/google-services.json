@@ -1,0 +1,99 @@
+{
+  "project_info": {
+    "project_number": "413854258520",
+    "firebase_url": "https://salaovitinhocliente.firebaseio.com",
+    "project_id": "salaovitinhocliente",
+    "storage_bucket": "salaovitinhocliente.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413854258520:android:39701488a99a0462",
+        "android_client_info": {
+          "package_name": "br.com.eduardo.salaovitinho"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "413854258520-27o9mbnvi20mcq2nk6gu7k3agio1p7ai.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.eduardo.salaovitinho",
+            "certificate_hash": "bcdd19d060eb394c0485f6ff796779786c017e9d"
+          }
+        },
+        {
+          "client_id": "413854258520-q5pqbi5rk753ha0qp6vf6bu32fs7pols.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCmLMbNpqILsrD1iVp3mQKeMUrR5Oej5M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "413854258520-q5pqbi5rk753ha0qp6vf6bu32fs7pols.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413854258520:android:5df655037edcf603",
+        "android_client_info": {
+          "package_name": "br.com.eduardo.salaovitinhocliente"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "413854258520-cfec029538ftbpcvs2ljrcf95vigp21q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.eduardo.salaovitinhocliente",
+            "certificate_hash": "bcdd19d060eb394c0485f6ff796779786c017e9d"
+          }
+        },
+        {
+          "client_id": "413854258520-q5pqbi5rk753ha0qp6vf6bu32fs7pols.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCmLMbNpqILsrD1iVp3mQKeMUrR5Oej5M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "413854258520-q5pqbi5rk753ha0qp6vf6bu32fs7pols.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

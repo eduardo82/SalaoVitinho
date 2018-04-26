@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:checkableBehavior="single"
+        android:id="@+id/navigation_content">
+
+        <item android:title="Agendamentos">
+            <menu>
+                <group android:checkableBehavior="single">
+                    <item android:id="@+id/nav_agendamentos"
+                        android:icon="@mipmap/ic_visibility_black_24dp"
+                        app:actionViewClass="android.widget.TextView"
+                        android:title="Solicitações"></item>
+                    <item android:id="@+id/nav_agendamentos_marcados"
+                        android:icon="@mipmap/ic_done_black_24dp"
+                        android:title="Marcados"></item>
+                    <item android:id="@+id/nav_reservar_agendamentos"
+                        android:icon="@mipmap/ic_receipt_black_24dp"
+                        android:title="Reservar/Cancelar"></item>
+                </group>
+            </menu>
+        </item>
+        <item
+            android:id="@+id/nav_agenda"
+            android:icon="@mipmap/ic_date_range_black_24dp"
+            android:title="Agenda" >
+        </item>
+        <item
+            android:id="@+id/nav_telefones"
+            android:icon="@mipmap/ic_call_black_24dp"
+            android:title="Telefones">
+        </item>
+        <item
+            android:id="@+id/nav_promocao"
+            android:icon="@mipmap/ic_attach_money_black_24dp"
+            android:title="Promoção (Em construção)"
+            android:enabled="false">
+        </item>
+        <item
+            android:id="@+id/nav_mensagem"
+            android:icon="@mipmap/ic_email_black_24dp"
+            android:title="Mensagem" />
+        <item
+            android:id="@+id/nav_sair"
+            android:icon="@mipmap/ic_arrow_back_black_24dp"
+            android:title="Sair" />
+    </group>
+
+</menu>
