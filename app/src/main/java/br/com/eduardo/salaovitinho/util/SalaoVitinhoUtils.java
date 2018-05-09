@@ -57,6 +57,19 @@ public class SalaoVitinhoUtils {
         dialog.show();
     }
 
+    public static void exibeDialogConfirmacao(Context context,
+                                              String titulo,
+                                              String mensagem,
+                                              DialogInterface.OnClickListener acaoBotaoSim) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(titulo);
+        builder.setIcon(R.mipmap.ic_ok_icon);
+        builder.setMessage(mensagem);
+        builder.setPositiveButton("OK", acaoBotaoSim);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     public static void insereMensagemLayout(Context context, LinearLayout linearLayout, String mensagemInserida) {
         linearLayout.removeAllViews();
         TextView et = new TextView(context);
@@ -67,61 +80,6 @@ public class SalaoVitinhoUtils {
         linearLayout.addView(et);
     }
 
-    public static void exibeDialogInformacoesUsuario(final Context context, Telefone telefone) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        final View view = inflater.inflate(R.layout.layout_adiciona_telefone, null);
 
-        final Switch autorizado = view.findViewById(R.id.switchAdicionarTelefone);
-        final EditText telephone = view.findViewById(R.id.editTextTelefone);
-
-        if (telefone != null) {
-            autorizado.setChecked(telefone.isAutorizado());
-            telephone.setText(telefone.getNumero());
-        }
-
-        autorizado.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                String valorComponente = isChecked ? "Autorizado" : "Negado";
-                Toast.makeText(context, valorComponente, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        BrPhoneNumberFormatter addLineNumberFormatter = new BrPhoneNumberFormatter(new WeakReference<>(telephone));
-        telephone.addTextChangedListener(addLineNumberFormatter);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setView(view);
-
-        builder.setPositiveButton("Salvar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        builder.setNegativeButton("Fechar", null);
-        builder.setCancelable(true);
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String numero = ((EditText) view.findViewById(R.id.editTextTelefone)).getText().toString();
-
-                if (numero.length() > 0 && numero.matches(".(31.)\\s9[7-9][0-9]{3}-[0-9]{4}")) {
-                    Telefone telefone = new Telefone();
-                    telefone.setNumero(numero);
-                    telefone.setAutorizado(autorizado.isChecked());
-                    FirebaseUtils.getReferenceChild(SalaoVitinhoConstants.FIREBASE_NODE_TELEFONES, numero).setValue(telefone);
-
-                    dialog.dismiss();
-                }
-                else {
-                    Toast.makeText(context, "O telefone deve ser válido e estar no formato (31) 99999-9999.",
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
 }
 

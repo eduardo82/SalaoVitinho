@@ -16,7 +16,7 @@ public interface SalaoVitinhoConstants {
     String SIM = "Sim";
     String NAO = "Não";
     String ENVIAR = "Enviar";
-    String PROFISSIONAL = "João Vitor";
+    String PROFISSIONAL = "Vitinho";
     String CONFIRMACAO = "Confirmação";
     String NAO_ATENDIDO = "NAO_ATENDIDO";
     String ATENDIDO = "ATENDIDO";

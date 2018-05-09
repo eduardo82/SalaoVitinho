@@ -54,15 +54,15 @@ public class ReservarCancelarHorarioFragment extends Fragment {
         "11:00h", "11:30h", "12:00h", "13:00h", "13:30h", "14:00h", "14:30h", "15:00h",
         "15:30h", "16:00h", "16:30h", "17:00h", "17:30h", "18:00h", "18:30h", "19:00h", "19:30h", "20:00h"};
 
-    EditText dataAgendamento;
-    ListView horariosListView;
-    EditText editTextNomeReservado;
-    Button btnAgendamento;
-    String diaAgendamento;
-    String horaAgendamento;
-    ArrayAdapter<String> adapterHorario;
-    ArrayList<String> horariosMarcados = new ArrayList<String>();
-    TextView horarioTxt;
+    private EditText dataAgendamento;
+    private ListView horariosListView;
+    private EditText editTextNomeReservado;
+    private Button btnAgendamento;
+    private String diaAgendamento;
+    private String horaAgendamento;
+    private ArrayAdapter<String> adapterHorario;
+    private ArrayList<String> horariosMarcados = new ArrayList<String>();
+    private TextView horarioTxt;
 
     @Nullable
     @Override
@@ -70,7 +70,7 @@ public class ReservarCancelarHorarioFragment extends Fragment {
         view = layoutInflater.inflate(R.layout.fragment_reserva_horario, viewGroup, false);
         context = view.getContext();
 
-        editTextNomeReservado = (EditText) view.findViewById(R.id.editTextNomeReservado);
+        editTextNomeReservado = view.findViewById(R.id.editTextNomeReservado);
         editTextNomeReservado.requestFocus();
         diaAgendamento = getActivity().getIntent().getStringExtra("data_agendamento");
         verificaAgendaDia(SalaoVitinhoConstants.PROFISSIONAL, diaAgendamento);
@@ -79,13 +79,13 @@ public class ReservarCancelarHorarioFragment extends Fragment {
     }
 
     private void trataElementosTela() {
-        horarioTxt = (TextView) view.findViewById(R.id.horarioTxt);
+        horarioTxt = view.findViewById(R.id.horarioTxt);
         horarioTxt.setText("Horários disponíveis!");
-        dataAgendamento = (EditText) view.findViewById(R.id.dataAgendamentoEditText);
+        dataAgendamento = view.findViewById(R.id.dataAgendamentoEditText);
         dataAgendamento.setText(diaAgendamento);
         dataAgendamento.setEnabled(false);
 
-        btnAgendamento = (Button) view.findViewById(R.id.buttonAgendamento);
+        btnAgendamento = view.findViewById(R.id.buttonAgendamento);
         btnAgendamento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,13 +111,13 @@ public class ReservarCancelarHorarioFragment extends Fragment {
                         buscaDadosBanco(profissional, diaAgendamentoSemBarras);
                     }
                     else {
-                        LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.reservar_cancelar_Agendamentos);
+                        LinearLayout linearLayout = view.findViewById(R.id.reservar_cancelar_Agendamentos);
                         SalaoVitinhoUtils.insereMensagemLayout(context, linearLayout, "SUA AGENDA ESTÁ CANCELADA\n PARA O DIA!");
                     }
                 }
                 else {
                     FirebaseUtils.getReferenceChild(SalaoVitinhoConstants.AGENDA, profissional, diaAgendamentoSemBarras).removeEventListener(this);
-                    LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.reservar_cancelar_Agendamentos);
+                    LinearLayout linearLayout = view.findViewById(R.id.reservar_cancelar_Agendamentos);
                     SalaoVitinhoUtils.insereMensagemLayout(context, linearLayout, "VOCÊ AINDA NÃO CRIOU A AGENDA PARA O DIA!");
                     linearLayout.setGravity(Gravity.CENTER);
 
@@ -196,7 +196,7 @@ public class ReservarCancelarHorarioFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
-                    horariosMarcados = new ArrayList<String>();
+                    horariosMarcados = new ArrayList<>();
 
                     for (DataSnapshot diaAgendamento : dataSnapshot.getChildren()) {
                         Horario horario = diaAgendamento.getValue(Horario.class);
@@ -238,7 +238,7 @@ public class ReservarCancelarHorarioFragment extends Fragment {
         List<String> listaHorarios = Arrays.asList(horarios);
         Collections.sort(listaHorarios);
         adapterHorario = new AdapterHorario(context, listaHorarios, horariosMarcados);
-        horariosListView = (ListView) view.findViewById(R.id.horariosListView);
+        horariosListView = view.findViewById(R.id.horariosListView);
 
         horariosListView.setAdapter(adapterHorario);
         horariosListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

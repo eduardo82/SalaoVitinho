@@ -28,14 +28,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import br.com.eduardo.salaovitinho.constatns.SalaoVitinhoConstants;
+import br.com.eduardo.salaovitinho.formatter.DateFormatter;
 import br.com.eduardo.salaovitinho.model.Horario;
 import br.com.eduardo.salaovitinho.model.Mensagem;
 import br.com.eduardo.salaovitinho.util.CircleTransform;
 import br.com.eduardo.salaovitinho.util.FirebaseUtils;
 import br.com.eduardo.salaovitinho.util.NotificacaoUtil;
+import br.com.eduardo.salaovitinho.util.SalaoVitinhoUtils;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -48,6 +52,7 @@ public class MainActivity extends AppCompatActivity
     TextView textViewEmailUsuario;
     ImageView imageViewUsuario;
     int contadorSolicitacoes = 0;
+    int contatorSolicitacoesPerdidas = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +83,7 @@ public class MainActivity extends AppCompatActivity
         auth = FirebaseAuth.getInstance();
 
         if (auth.getCurrentUser() != null) {
-
+            montaDadosUsuario();
             Bundle extras = getIntent().getExtras();
             if (extras != null && extras.size() > 0) {
                 if (extras.get("mensagem") != null) {
@@ -97,39 +102,26 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             else {
-                observerAgendamentos();
+                observerAgendamentos(false);
+                getFragmentManager().beginTransaction().replace(R.id.conteudo,
+                    new InicioBotoesFragment()).commit();
             }
         }
         else {
             startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
                 .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.GoogleBuilder().build())).build(), RC_SIGN_IN);
         }
+
+        getFragmentManager().beginTransaction().replace(R.id.conteudo,
+            new InicioBotoesFragment()).commit();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) {
-                textViewEmailUsuario.setText(auth.getCurrentUser().getEmail());
-                textViewNomeUsuario.setText(auth.getCurrentUser().getDisplayName());
-                Picasso.with(this)
-                    .load(auth.getCurrentUser().getPhotoUrl())
-                    .error(R.mipmap.ic_launcher_round)
-                    .resize(180, 180)
-                    .transform(new CircleTransform())
-                    .into(imageViewUsuario);
+                montaDadosUsuario();
             }
-        }
-    }
-
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
         }
     }
 
@@ -179,14 +171,14 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void observerAgendamentos() {
+    private void observerAgendamentos(final boolean pause) {
         try {
 
             FirebaseUtils.getReferenceChild(SalaoVitinhoConstants.AGENDAMENTO, SalaoVitinhoConstants.VITINHO,
                     SalaoVitinhoConstants.NAO_ATENDIDO).addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    trataGeracaoAlertasNovosAgendamentos(dataSnapshot);
+                    trataGeracaoAlertasNovosAgendamentos(dataSnapshot, pause);
                 }
 
                 @Override
@@ -213,15 +205,24 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void trataGeracaoAlertasNovosAgendamentos(DataSnapshot dataSnapshot) {
+    private void trataGeracaoAlertasNovosAgendamentos(DataSnapshot dataSnapshot, boolean pause) {
         if (dataSnapshot.hasChildren()) {
-
+            contadorSolicitacoes = 0;
+            List<Horario> horariosDeletar = new ArrayList<>();
             for (DataSnapshot hora : dataSnapshot.getChildren()) {
                 Horario horario = hora.getValue(Horario.class);
                 if (horario != null) {
                     if (!horario.isAutorizado() && !horario.isDisponivel() && !horario.isRecusado()) {
-                        contadorSolicitacoes++;
+                        String diaAtual = DateFormatter.getDiaAtual();
+                        if (diaAtual.compareTo(horario.getDiaAtendimento()) > 0) {
+                            contatorSolicitacoesPerdidas++;
+                            horariosDeletar.add(horario);
+                        }
+                        else {
+                            contadorSolicitacoes++;
+                        }
                     }
+
                 }
             }
 
@@ -230,14 +231,26 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(context, "Você possui solicitações de agendamentos para autorização", Toast.LENGTH_LONG).show();
                 Intent it = new Intent(context, MainActivity.class);
                 it.putExtra("agendamentos", true);
-                NotificacaoUtil.geraNotificacaoSimples(getBaseContext(), it, SalaoVitinhoConstants.INFORMACAO, "Você possui uma nova solicitação de agendamento!", 1);
+
+                if (pause) {
+                    NotificacaoUtil.geraNotificacaoSimples(getBaseContext(), it, SalaoVitinhoConstants.INFORMACAO, "Você possui uma nova solicitação de agendamento!", 1);
+                }
+            }
+
+            if (contatorSolicitacoesPerdidas > 0) {
+                SalaoVitinhoUtils.exibeDialogConfirmacao(context, "Informação","Você deixou de autorizar " + contatorSolicitacoesPerdidas + " solicitação(ões) antes do dia de hoje. Verifique diariamente suas solicitações.", null);
+
+                for (Horario horario : horariosDeletar) {
+                    FirebaseUtils.getReferenceChild(SalaoVitinhoConstants.AGENDAMENTO, SalaoVitinhoConstants.VITINHO,
+                            SalaoVitinhoConstants.NAO_ATENDIDO, horario.getDiaAtendimento()).removeValue();
+                }
             }
         }
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onStop() {
+        super.onStop();
         ValueEventListener listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -263,6 +276,34 @@ public class MainActivity extends AppCompatActivity
 
             }
         };
+
+
+        observerAgendamentos(true);
         //FirebaseUtils.getReferenceChild(caminho).addValueEventListener(listener);
+    }
+
+    private void montaDadosUsuario() {
+        textViewEmailUsuario.setText(auth.getCurrentUser().getEmail());
+        textViewNomeUsuario.setText(auth.getCurrentUser().getDisplayName());
+        Picasso.with(this)
+                .load(auth.getCurrentUser().getPhotoUrl())
+                .error(R.mipmap.ic_launcher_round)
+                .resize(180, 180)
+                .transform(new CircleTransform())
+                .into(imageViewUsuario);
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        android.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.conteudo, new InicioBotoesFragment()).commit();
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 }
