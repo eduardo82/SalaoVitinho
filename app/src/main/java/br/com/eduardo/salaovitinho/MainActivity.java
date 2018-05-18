@@ -156,9 +156,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_agenda) {
             fragmentManager.beginTransaction().replace(R.id.conteudo,
                     new AgendaFragment()).commit();
-        } else if (id == R.id.nav_mensagem) {
-            fragmentManager.beginTransaction().replace(R.id.conteudo,
-                    new MensagemFragment()).commit();
         } else if (id == R.id.nav_telefones) {
             fragmentManager.beginTransaction().replace(R.id.conteudo,
                     new TelefoneFragment()).commit();

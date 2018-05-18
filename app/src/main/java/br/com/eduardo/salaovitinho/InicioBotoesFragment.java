@@ -20,7 +20,6 @@ public class InicioBotoesFragment extends Fragment {
     private Button reservarCancelarBotao;
     private Button agendaBotao;
     private Button telefonesBotao;
-    private Button mensagemBotao;
     private Button sairBotao;
 
     @Nullable
@@ -34,7 +33,6 @@ public class InicioBotoesFragment extends Fragment {
         reservarCancelarBotao = view.findViewById(R.id.reservarBotao);
         agendaBotao = view.findViewById(R.id.agendaBotao);
         telefonesBotao = view.findViewById(R.id.telefonesBotao);
-        mensagemBotao = view.findViewById(R.id.mensagemBotao);
         sairBotao = view.findViewById(R.id.sairBotao);
 
         trataAcaoClickBotoes();
@@ -82,14 +80,6 @@ public class InicioBotoesFragment extends Fragment {
             public void onClick(View v) {
                 fragmentManager.beginTransaction().replace(R.id.conteudo,
                     new TelefoneFragment()).commit();
-            }
-        });
-
-        mensagemBotao.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fragmentManager.beginTransaction().replace(R.id.conteudo,
-                    new MensagemFragment()).commit();
             }
         });
 
