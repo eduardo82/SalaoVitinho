@@ -67,30 +67,6 @@
             android:text="Telefones" />
 
         <Button
-            android:id="@+id/promocoesBotao"
-            style="@style/BotaoInicial"
-            android:drawableTop="@drawable/image_cifrao"
-            android:background="@drawable/initial_button"
-            android:layout_width="0dp"
-            android:layout_weight="0.5"
-            android:enabled="false"
-            android:text="Promoções" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/mensagemBotao"
-            style="@style/BotaoInicial"
-            android:drawableTop="@drawable/image_mensagem"
-            android:background="@drawable/initial_button"
-            android:layout_width="0dp"
-            android:layout_weight="0.5"
-            android:text="Mensagem" />
-
-        <Button
             android:id="@+id/sairBotao"
             style="@style/BotaoInicial"
             android:drawableTop="@drawable/image_sair"

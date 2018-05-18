@@ -248,40 +248,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        ValueEventListener listener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Mensagem resultado = dataSnapshot.getValue(Mensagem.class);
-
-                if (resultado != null) {
-                    if (!resultado.isLido()) {
-                        FirebaseUtils.getReferenceChild("").removeEventListener(this);
-                        Intent intent = new Intent(context, MainActivity.class);
-                        intent.putExtra("mensagem", resultado.getMensagem());
-                        intent.putExtra("telefone", resultado.getTelefone());
-                        intent.putExtra("lido", resultado.isLido());
-
-                        NotificacaoUtil.geraNotificacaoSimples(context, intent,  SalaoVitinhoConstants.INFORMACAO,
-                                "Sua mensagem foi respondida.\n Resposta -> " + resultado.getMensagem(), 2);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-
-
-        observerAgendamentos(true);
-        //FirebaseUtils.getReferenceChild(caminho).addValueEventListener(listener);
-    }
-
     private void montaDadosUsuario() {
         textViewEmailUsuario.setText(auth.getCurrentUser().getEmail());
         textViewNomeUsuario.setText(auth.getCurrentUser().getDisplayName());
@@ -302,8 +268,6 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
         }
     }
 }
