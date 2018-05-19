@@ -13,14 +13,18 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -42,7 +46,7 @@ public class TelefoneFragment extends Fragment {
     private View view;
     private Context context;
     private Button botaoAdicionarTelefone;
-    private ListView listViewTelefones;
+    private SwipeMenuListView listViewTelefones;
     private TelefonesAdapter mensagemAdapter;
     private List<Telefone> telefones = new ArrayList<>();
 
@@ -55,6 +59,8 @@ public class TelefoneFragment extends Fragment {
 
         botaoAdicionarTelefone = view.findViewById(R.id.buttonAddTelefone);
         listViewTelefones = view.findViewById(R.id.listViewTelefones);
+
+        trataEventosListViewTelefones();
 
         FirebaseUtils.getReferenceChild(SalaoVitinhoConstants.FIREBASE_NODE_TELEFONES).addValueEventListener(new ValueEventListener() {
             @Override
@@ -72,7 +78,6 @@ public class TelefoneFragment extends Fragment {
                     if (telefones.size() > 0) {
                         mensagemAdapter = new TelefonesAdapter(context, telefones);
                         listViewTelefones.setAdapter(mensagemAdapter);
-
                     }
                 }
             }
@@ -86,26 +91,14 @@ public class TelefoneFragment extends Fragment {
         botaoAdicionarTelefone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                exibeDialogInformacoesTelefone(context, null, false);
+                exibeDialogInformacoesTelefone(context, null);
             }
         });
-
-        onClickLista();
 
         return view;
     }
 
-    private void onClickLista() {
-        listViewTelefones.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Telefone telefone = telefones.get(position);
-                exibeDialogInformacoesTelefone(context, telefone, true);
-            }
-        });
-    }
-
-    private void exibeDialogInformacoesTelefone(final Context context, Telefone telefone, boolean apagaRegistro) {
+    private void exibeDialogInformacoesTelefone(final Context context, Telefone telefone) {
         LayoutInflater inflater = LayoutInflater.from(context);
         final View view = inflater.inflate(R.layout.layout_adiciona_telefone, null);
 
@@ -152,20 +145,55 @@ public class TelefoneFragment extends Fragment {
         });
         builder.setNegativeButton("Fechar", null);
 
-        if (apagaRegistro) {
-            builder.setNeutralButton("Apagar", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    String numero = ((EditText) view.findViewById(R.id.editTextTelefone)).getText().toString();
-                    FirebaseUtils.getReferenceChild(SalaoVitinhoConstants.FIREBASE_NODE_TELEFONES, numero).removeValue();
-                    telefones.clear();
-                    dialog.dismiss();
-                }
-            });
-        }
-
         builder.setCancelable(true);
         builder.create().show();
+    }
+
+    private void trataEventosListViewTelefones() {
+         SwipeMenuCreator creator = new SwipeMenuCreator() {
+
+            @Override
+            public void create(SwipeMenu menu) {
+                // create "delete" item
+                SwipeMenuItem deleteItem = new SwipeMenuItem(context);
+                // set item background
+                deleteItem.setBackground(new android.graphics.drawable.ColorDrawable(android.graphics.Color.rgb(0xF9,
+                        0x3F, 0x25)));
+                // set item width
+                deleteItem.setTitle("apagar");
+                deleteItem.setTitleColor(android.graphics.Color.WHITE);
+                deleteItem.setTitleSize(18);
+                deleteItem.setWidth(200);
+                // add to menu
+                menu.addMenuItem(deleteItem);
+            }
+        };
+
+        listViewTelefones.setMenuCreator(creator);
+
+        listViewTelefones.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                switch (index) {
+                    case 0:
+                        Telefone telefone = telefones.get(position);
+                        FirebaseUtils.getReferenceChild(SalaoVitinhoConstants.FIREBASE_NODE_TELEFONES, telefone.getNumero()).removeValue();
+                        telefones.clear();
+                        break;
+                }
+                // false : close the menu; true : not close the menu
+                return false;
+            }
+        });
+
+        listViewTelefones.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Telefone telefone = telefones.get(position);
+                exibeDialogInformacoesTelefone(context, telefone);
+            }
+        });
+
     }
 
 }

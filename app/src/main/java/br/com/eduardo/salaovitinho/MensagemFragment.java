@@ -57,7 +57,7 @@ public class MensagemFragment extends Fragment {
     }
 
     private void trataListViewMensagensClientes() {
-        mensagensClientesListView = (SwipeMenuListView) view.findViewById(R.id.listViewMensagens);
+        mensagensClientesListView = view.findViewById(R.id.listViewMensagens);
 
         SwipeMenuCreator creator = new SwipeMenuCreator() {
 

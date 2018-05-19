@@ -13,7 +13,7 @@
             android:id="@+id/solicitacoesBotao"
             style="@style/BotaoInicial"
             android:background="@drawable/initial_button"
-            android:drawableTop="@drawable/image_olho"
+            android:drawableTop="@drawable/olho"
             android:layout_width="0dp"
             android:layout_weight="0.5"
             android:text="Solicitações" />
@@ -21,7 +21,7 @@
         <Button
             android:id="@+id/marcadosBotao"
             style="@style/BotaoInicial"
-            android:drawableTop="@drawable/image_cadastro"
+            android:drawableTop="@drawable/cadastro"
             android:background="@drawable/initial_button"
             android:layout_width="0dp"
             android:layout_weight="0.5"
@@ -37,7 +37,7 @@
             android:id="@+id/reservarBotao"
             style="@style/BotaoInicial"
             android:background="@drawable/initial_button"
-            android:drawableTop="@drawable/image_reservar"
+            android:drawableTop="@drawable/agenda"
             android:layout_width="0dp"
             android:layout_weight="0.5"
             android:text="Reservar/Cancelar" />
@@ -46,7 +46,7 @@
             android:id="@+id/agendaBotao"
             style="@style/BotaoInicial"
             android:background="@drawable/initial_button"
-            android:drawableTop="@drawable/image_agenda"
+            android:drawableTop="@drawable/agenda_horarios"
             android:layout_width="0dp"
             android:layout_weight="0.5"
             android:text="Agenda" />
@@ -60,7 +60,7 @@
         <Button
             android:id="@+id/telefonesBotao"
             style="@style/BotaoInicial"
-            android:drawableTop="@drawable/image_telefone"
+            android:drawableTop="@drawable/telefone"
             android:background="@drawable/initial_button"
             android:layout_width="0dp"
             android:layout_weight="0.5"
@@ -69,7 +69,7 @@
         <Button
             android:id="@+id/sairBotao"
             style="@style/BotaoInicial"
-            android:drawableTop="@drawable/image_sair"
+            android:drawableTop="@drawable/sair"
             android:background="@drawable/initial_button"
             android:layout_width="0dp"
             android:layout_weight="0.5"

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/agenda_horario_overlay"
-        android:drawable="@drawable/agenda_horarios"
-        android:width="38dp"
-        android:height="38dp" />
-</layer-list>

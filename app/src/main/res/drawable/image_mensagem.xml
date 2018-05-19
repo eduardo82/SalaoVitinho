@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/mensagem_overlay"
-        android:drawable="@drawable/mensagem"
-        android:width="35dp"
-        android:height="35dp" />
-</layer-list>
