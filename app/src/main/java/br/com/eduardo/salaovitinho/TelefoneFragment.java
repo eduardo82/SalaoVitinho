@@ -43,7 +43,7 @@ public class TelefoneFragment extends Fragment {
     private Context context;
     private Button botaoAdicionarTelefone;
     private ListView listViewTelefones;
-    TelefonesAdapter mensagemAdapter;
+    private TelefonesAdapter mensagemAdapter;
     private List<Telefone> telefones = new ArrayList<>();
 
 
@@ -59,7 +59,6 @@ public class TelefoneFragment extends Fragment {
         FirebaseUtils.getReferenceChild(SalaoVitinhoConstants.FIREBASE_NODE_TELEFONES).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                telefones.clear();
                 if (dataSnapshot != null && dataSnapshot.hasChildren()) {
                     GenericTypeIndicator<Map<String, Telefone>> genericTypeIndicator = new GenericTypeIndicator<Map<String, Telefone>>() {};
                     Map<String, Telefone> telefonesBanco = dataSnapshot.getValue(genericTypeIndicator);
@@ -73,7 +72,7 @@ public class TelefoneFragment extends Fragment {
                     if (telefones.size() > 0) {
                         mensagemAdapter = new TelefonesAdapter(context, telefones);
                         listViewTelefones.setAdapter(mensagemAdapter);
-                        onClickLista();
+
                     }
                 }
             }
@@ -84,14 +83,14 @@ public class TelefoneFragment extends Fragment {
             }
         });
 
-
-
         botaoAdicionarTelefone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 exibeDialogInformacoesTelefone(context, null, false);
             }
         });
+
+        onClickLista();
 
         return view;
     }
@@ -142,7 +141,7 @@ public class TelefoneFragment extends Fragment {
                     telefone.setNumero(numero);
                     telefone.setAutorizado(autorizado.isChecked());
                     FirebaseUtils.getReferenceChild(SalaoVitinhoConstants.FIREBASE_NODE_TELEFONES, numero).setValue(telefone);
-
+                    telefones.clear();
                     dialog.dismiss();
                 }
                 else {
@@ -158,9 +157,8 @@ public class TelefoneFragment extends Fragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String numero = ((EditText) view.findViewById(R.id.editTextTelefone)).getText().toString();
-
-
                     FirebaseUtils.getReferenceChild(SalaoVitinhoConstants.FIREBASE_NODE_TELEFONES, numero).removeValue();
+                    telefones.clear();
                     dialog.dismiss();
                 }
             });
