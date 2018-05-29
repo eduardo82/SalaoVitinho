@@ -65,6 +65,7 @@ public class TelefoneFragment extends Fragment {
         FirebaseUtils.getReferenceChild(SalaoVitinhoConstants.FIREBASE_NODE_TELEFONES).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                telefones = new ArrayList<>();
                 if (dataSnapshot != null && dataSnapshot.hasChildren()) {
                     GenericTypeIndicator<Map<String, Telefone>> genericTypeIndicator = new GenericTypeIndicator<Map<String, Telefone>>() {};
                     Map<String, Telefone> telefonesBanco = dataSnapshot.getValue(genericTypeIndicator);
@@ -104,10 +105,12 @@ public class TelefoneFragment extends Fragment {
 
         final Switch autorizado = view.findViewById(R.id.switchAdicionarTelefone);
         final EditText telephone = view.findViewById(R.id.editTextTelefone);
+        final EditText nomeContato = view.findViewById(R.id.editTextNomeContato);
 
         if (telefone != null) {
-            autorizado.setChecked(telefone.isAutorizado());
+            autorizado.setChecked(telefone.getAutorizado());
             telephone.setText(telefone.getNumero());
+            nomeContato.setText(telefone.getNome());
         }
 
         autorizado.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -128,11 +131,13 @@ public class TelefoneFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String numero = ((EditText) view.findViewById(R.id.editTextTelefone)).getText().toString();
-
+                String nome = ((EditText) view.findViewById(R.id.editTextNomeContato)).getText().toString();
                 if (numero.length() > 0 && numero.matches(".(31.)\\s9[7-9][0-9]{3}-[0-9]{4}")) {
                     Telefone telefone = new Telefone();
+                    telefone.setNome(nome);
                     telefone.setNumero(numero);
                     telefone.setAutorizado(autorizado.isChecked());
+                    telefone.setNovo(false);
                     FirebaseUtils.getReferenceChild(SalaoVitinhoConstants.FIREBASE_NODE_TELEFONES, numero).setValue(telefone);
                     telefones.clear();
                     dialog.dismiss();

@@ -5,11 +5,29 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/textViewTelefone"
+        android:id="@+id/textViewNome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Telefone"
+        android:text="Nome"
         style="@style/Label"/>
+
+    <EditText
+        android:id="@+id/editTextNomeContato"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:ems="10"
+        android:inputType="text"
+        android:maxLength="15"
+        android:hint="Nome"
+        />
+
+    <TextView
+        android:id="@+id/textViewTelefone"
+        style="@style/Label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Telefone" />
 
     <EditText
         android:id="@+id/editTextTelefone"

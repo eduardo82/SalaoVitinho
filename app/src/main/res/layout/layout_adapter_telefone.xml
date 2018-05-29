@@ -1,22 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/textViewTelefone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.9"
-        style="@style/Telefone"
-        android:text="" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
 
+            <TextView
+                android:id="@+id/textViewNomeContato"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Telefone"
+                android:text="Nome" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="0.5">
+                <TextView
+                    android:id="@+id/textViewTelefone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="Numero" />
+                <ImageView
+                    android:id="@+id/imageViewNovo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:visibility="visible"
+                    android:layout_marginLeft="10dp"
+                    app:srcCompat="@drawable/baseline_fiber_new_black" />
+            </LinearLayout>
+        </LinearLayout>
     <Switch
         android:id="@+id/switchAutorizado"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="18dp"
         android:focusable="false"
         android:layout_weight="0.1" />
 </LinearLayout>

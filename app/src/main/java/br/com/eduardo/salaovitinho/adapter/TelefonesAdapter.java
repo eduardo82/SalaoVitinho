@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,17 +50,28 @@ public class TelefonesAdapter extends BaseAdapter {
         View view = LayoutInflater.from(context).inflate(R.layout.layout_adapter_telefone, parent, false);
         final TextView numero = view.findViewById(R.id.textViewTelefone);
         final Switch autorizado = view.findViewById(R.id.switchAutorizado);
+        final TextView nome = view.findViewById(R.id.textViewNomeContato);
+        final ImageView novo = view.findViewById(R.id.imageViewNovo);
 
         final Telefone telefone = getItem(position);
 
-        autorizado.setChecked(telefone.isAutorizado());
+        autorizado.setChecked(telefone.getAutorizado());
         numero.setText(telefone.getNumero());
+        nome.setText(telefone.getNome());
+
+        if (telefone.getNovo() != null && telefone.getNovo() == true) {
+            novo.setVisibility(View.VISIBLE);
+        }
+        else {
+            novo.setVisibility(View.GONE);
+        }
 
         autorizado.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 telefones.clear();
                 telefone.setAutorizado(isChecked);
+                telefone.setNovo(false);
                 String valorCompenente = isChecked ? "Autorizado" : "Negado";
                 Toast.makeText(context, valorCompenente, Toast.LENGTH_SHORT).show();
                 notifyDataSetChanged();
