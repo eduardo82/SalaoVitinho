@@ -15,7 +15,9 @@ import java.util.List;
 
 import br.com.eduardo.salaovitinho.R;
 import br.com.eduardo.salaovitinho.model.Telefone;
+import br.com.eduardo.salaovitinho.util.ContactsUtil;
 import br.com.eduardo.salaovitinho.util.FirebaseUtils;
+import br.com.eduardo.salaovitinho.util.SalaoVitinhoUtils;
 
 import static br.com.eduardo.salaovitinho.constatns.SalaoVitinhoConstants.FIREBASE_NODE_TELEFONES;
 
@@ -59,11 +61,19 @@ public class TelefonesAdapter extends BaseAdapter {
         numero.setText(telefone.getNumero());
         nome.setText(telefone.getNome());
 
-        if (telefone.getNovo() != null && telefone.getNovo() == true) {
-            novo.setVisibility(View.VISIBLE);
+        String numeroTelefone =  telefone.getNumero().replace("(","").replace(")", "").replace("-","").replace(" ","");
+        Boolean estaSalvo = ContactsUtil.contatoEstaSalvoAgenda(context, numeroTelefone) || ContactsUtil.contatoEstaSalvoAgenda(context, numeroTelefone.substring(2));
+
+        if (estaSalvo && telefone.getNovo() == true) {
+            telefone.setNovo(false);
+            telefone.setAutorizado(true);
+            novo.setVisibility(View.GONE);
+            FirebaseUtils.getReferenceChild(FIREBASE_NODE_TELEFONES, telefone.getNumero()).setValue(telefone);
         }
         else {
-            novo.setVisibility(View.GONE);
+            if (telefone.getNovo() == false) {
+                novo.setVisibility(View.GONE);
+            }
         }
 
         autorizado.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

@@ -2,9 +2,11 @@ package br.com.eduardo.salaovitinho.util;
 
 import android.content.ContentProvider;
 import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.widget.Toast;
 
@@ -16,15 +18,25 @@ import java.util.ArrayList;
 
 public class ContactsUtil {
 
-    public static boolean contatoEstaSalvoAgenda(Context context, long id) {
-        Cursor cursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + id, null, null);
+    public static boolean contatoEstaSalvoAgenda(Context context, String number) {
+        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
+
+        ContentResolver contentResolver = context.getContentResolver();
+        Cursor contactLookup = contentResolver.query(uri, new String[] {BaseColumns._ID,
+                ContactsContract.PhoneLookup.DISPLAY_NAME }, null, null, null);
         try {
-            return Boolean.valueOf(cursor.moveToNext());
+            if (contactLookup != null && contactLookup.getCount() > 0) {
+                contactLookup.moveToNext();
+                String nome = contactLookup.getString(contactLookup.getColumnIndex(ContactsContract.Data.DISPLAY_NAME));
+                return nome != null;
+            }
         }
         finally {
-            cursor.close();
+            if (contactLookup != null) {
+                contactLookup.close();
+            }
         }
+        return false;
     }
 
     public static final boolean salvaContatoAgenda(Context context, String telefone, String nome) {

@@ -3,9 +3,12 @@ package br.com.eduardo.salaovitinho;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -69,6 +72,11 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if( context.getApplicationContext().checkSelfPermission(android.Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED )
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_CONTACTS}, 1);
+        }
 
         numeroSolicitacoes = (TextView) MenuItemCompat.getActionView(navigationView.getMenu().findItem(R.id.nav_agendamentos));
         numeroSolicitacoes.setGravity(Gravity.CENTER_VERTICAL);
