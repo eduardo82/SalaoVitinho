@@ -28,17 +28,21 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import br.com.eduardo.salaovitinho.adapter.TelefonesAdapter;
 import br.com.eduardo.salaovitinho.constatns.SalaoVitinhoConstants;
 import br.com.eduardo.salaovitinho.formatter.DateFormatter;
 import br.com.eduardo.salaovitinho.model.Horario;
 import br.com.eduardo.salaovitinho.model.Mensagem;
+import br.com.eduardo.salaovitinho.model.Telefone;
 import br.com.eduardo.salaovitinho.util.CircleTransform;
 import br.com.eduardo.salaovitinho.util.FirebaseUtils;
 import br.com.eduardo.salaovitinho.util.NotificacaoUtil;
@@ -51,11 +55,13 @@ public class MainActivity extends AppCompatActivity
     private static final int RC_SIGN_IN = 123;
     FirebaseAuth auth;
     TextView numeroSolicitacoes;
+    TextView numeroTelefones;
     TextView textViewNomeUsuario;
     TextView textViewEmailUsuario;
     ImageView imageViewUsuario;
     int contadorSolicitacoes = 0;
     int contatorSolicitacoesPerdidas = 0;
+    int contatosTelefonesNovos = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +89,11 @@ public class MainActivity extends AppCompatActivity
         numeroSolicitacoes.setTypeface(null, Typeface.BOLD);
         numeroSolicitacoes.setTextColor(getResources().getColor(R.color.colorAccent));
 
+        numeroTelefones = (TextView) MenuItemCompat.getActionView(navigationView.getMenu().findItem(R.id.nav_telefones));
+        numeroTelefones.setGravity(Gravity.CENTER_VERTICAL);
+        numeroTelefones.setTypeface(null, Typeface.BOLD);
+        numeroTelefones.setTextColor(getResources().getColor(R.color.colorAccent));
+
         View viewHeader = navigationView.getHeaderView(0);
         textViewEmailUsuario = viewHeader.findViewById(R.id.textViewEmailUsuario);
         textViewNomeUsuario = viewHeader.findViewById(R.id.textViewNomeUsuario);
@@ -92,36 +103,46 @@ public class MainActivity extends AppCompatActivity
 
         if (auth.getCurrentUser() != null) {
             montaDadosUsuario();
-            Bundle extras = getIntent().getExtras();
-            if (extras != null && extras.size() > 0) {
-                if (extras.get("mensagem") != null) {
-                    getIntent().putExtra("telefone", extras.getString("telefone"));
-                    getIntent().putExtra("lido", extras.getString("lido"));
-                    getIntent().putExtra("mensagem", extras.getString("mensagem"));
 
-                    getFragmentManager().beginTransaction().replace(R.id.conteudo,
-                            new DetalheMensagemFragment()).commit();
-                    NotificacaoUtil.cancelaNotificacao(context, 2);
-                }
-                else if (extras.get("agendamentos") != null){
-                    getFragmentManager().beginTransaction().replace(R.id.conteudo,
-                            new AutorizadorFragment()).commit();
-                    NotificacaoUtil.cancelaNotificacao(context, 1);
-                }
-            }
-            else {
-                observerAgendamentos(false);
-                getFragmentManager().beginTransaction().replace(R.id.conteudo,
-                    new InicioBotoesFragment()).commit();
-            }
         }
         else {
             startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
                 .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.GoogleBuilder().build())).build(), RC_SIGN_IN);
         }
 
+        observerMensagens();
+        observerAgendamentos(false);
+        trataEventosBundleExtras();
+
         getFragmentManager().beginTransaction().replace(R.id.conteudo,
             new InicioBotoesFragment()).commit();
+    }
+
+    private void trataEventosBundleExtras() {
+        Bundle extras = getIntent().getExtras();
+        if (extras != null && extras.size() > 0) {
+            if (extras.get("mensagem") != null) {
+                getIntent().putExtra("telefone", extras.getString("telefone"));
+                getIntent().putExtra("lido", extras.getString("lido"));
+                getIntent().putExtra("mensagem", extras.getString("mensagem"));
+
+                getFragmentManager().beginTransaction().replace(R.id.conteudo,
+                        new DetalheMensagemFragment()).commit();
+            }
+            else if (extras.get("agendamentos") != null){
+                getFragmentManager().beginTransaction().replace(R.id.conteudo,
+                        new AutorizadorFragment()).commit();
+                NotificacaoUtil.cancelaNotificacao(context, 1);
+            }
+            else if (extras.get("telefones") != null){
+                getFragmentManager().beginTransaction().replace(R.id.conteudo,
+                        new TelefoneFragment()).commit();
+            }
+        }
+        else {
+            getFragmentManager().beginTransaction().replace(R.id.conteudo,
+                    new InicioBotoesFragment()).commit();
+        }
     }
 
     @Override
@@ -210,6 +231,44 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void observerMensagens() {
+        FirebaseUtils.getReferenceChild(SalaoVitinhoConstants.FIREBASE_NODE_TELEFONES).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                contatosTelefonesNovos = 0;
+                List<Telefone> telefones = new ArrayList<>();
+                if (dataSnapshot != null && dataSnapshot.hasChildren()) {
+                    GenericTypeIndicator<Map<String, Telefone>> genericTypeIndicator = new GenericTypeIndicator<Map<String, Telefone>>() {};
+                    Map<String, Telefone> telefonesBanco = dataSnapshot.getValue(genericTypeIndicator);
+
+                    if (telefonesBanco != null) {
+                        for (Map.Entry<String, Telefone> telefone : telefonesBanco.entrySet()) {
+                            telefones.add(telefone.getValue());
+                        }
+                    }
+
+                    if (telefones.size() > 0) {
+                        for (Telefone telefone : telefones) {
+                            if (telefone.getNovo() == true) {
+                                contatosTelefonesNovos++;
+                            }
+                        }
+                    }
+                }
+
+                if (contatosTelefonesNovos > 0) {
+                    numeroTelefones.setText("+" + String.valueOf(contatosTelefonesNovos));
+                    Toast.makeText(context, "Você possui telefones novos.", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void trataGeracaoAlertasNovosAgendamentos(DataSnapshot dataSnapshot, boolean pause) {
         if (dataSnapshot.hasChildren()) {
             contadorSolicitacoes = 0;
@@ -232,7 +291,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             if (contadorSolicitacoes > 0) {
-                numeroSolicitacoes.setText(String.valueOf(contadorSolicitacoes) + "+");
+                numeroSolicitacoes.setText("+"+String.valueOf(contadorSolicitacoes));
                 Toast.makeText(context, "Você possui solicitações de agendamentos para autorização", Toast.LENGTH_LONG).show();
                 Intent it = new Intent(context, MainActivity.class);
                 it.putExtra("agendamentos", true);
