@@ -17,7 +17,6 @@ import br.com.eduardo.salaovitinho.R;
 import br.com.eduardo.salaovitinho.model.Telefone;
 import br.com.eduardo.salaovitinho.util.ContactsUtil;
 import br.com.eduardo.salaovitinho.util.FirebaseUtils;
-import br.com.eduardo.salaovitinho.util.SalaoVitinhoUtils;
 
 import static br.com.eduardo.salaovitinho.constatns.SalaoVitinhoConstants.FIREBASE_NODE_TELEFONES;
 
@@ -25,7 +24,6 @@ public class TelefonesAdapter extends BaseAdapter {
 
     private final Context context;
     private List<Telefone> telefones;
-    private OnUpdateListener listener;
 
     public TelefonesAdapter(Context context, List<Telefone> objects) {
         this.context = context;
@@ -79,7 +77,6 @@ public class TelefonesAdapter extends BaseAdapter {
         autorizado.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                telefones.clear();
                 telefone.setAutorizado(isChecked);
                 telefone.setNovo(false);
                 String valorCompenente = isChecked ? "Autorizado" : "Negado";
@@ -89,13 +86,5 @@ public class TelefonesAdapter extends BaseAdapter {
             }
         });
         return view;
-    }
-
-    public interface OnUpdateListener {
-        void onUpdate(String text);
-    }
-
-    public void setOnUpdateListner(OnUpdateListener listener) {
-        this.listener = listener;
     }
 }

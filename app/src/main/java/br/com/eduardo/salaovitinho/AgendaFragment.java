@@ -65,7 +65,7 @@ public class AgendaFragment extends Fragment {
         checkAgendaPadrao = (CheckBox) view.findViewById(R.id.checkBoxAgendaPadrao);
         checkCancelaAgenda = (CheckBox) view.findViewById(R.id.checkBoxCancelaAgenda);
 
-        checkAgendaPadrao.setText("AGENDA PADRÃO (08:00 / 20:00)");
+        checkAgendaPadrao.setText("AGENDA PADRÃO (09:00 / 21:00)");
         checkCancelaAgenda.setText("CANCELA AGENDA DO DIA");
 
         primeiroPeriodoFim.setEnabled(false);

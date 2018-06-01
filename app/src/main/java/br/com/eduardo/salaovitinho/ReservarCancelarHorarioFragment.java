@@ -1,15 +1,11 @@
 package br.com.eduardo.salaovitinho;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,17 +38,16 @@ import br.com.eduardo.salaovitinho.model.Horario;
 import br.com.eduardo.salaovitinho.util.FirebaseUtils;
 import br.com.eduardo.salaovitinho.util.SalaoVitinhoUtils;
 
-import static br.com.eduardo.salaovitinho.R.drawable.round_button;
-
 public class ReservarCancelarHorarioFragment extends Fragment {
 
     View view;
     Context context;
     final Locale locale = new Locale("pt", "BR");
 
-    String[] horarios = new String[]{ "08:00h", "08:30h", "09:00h", "09:30h", "10:30h",
+    String[] horarios = new String[]{ "09:00h", "09:30h", "10:30h",
         "11:00h", "11:30h", "12:00h", "13:00h", "13:30h", "14:00h", "14:30h", "15:00h",
-        "15:30h", "16:00h", "16:30h", "17:00h", "17:30h", "18:00h", "18:30h", "19:00h", "19:30h", "20:00h"};
+        "15:30h", "16:00h", "16:30h", "17:00h", "17:30h", "18:00h", "18:30h", "19:00h",
+        "19:30h", "20:00h", "20:30h", "21:00h"};
 
     private EditText dataAgendamento;
     private ListView horariosListView;
@@ -102,12 +97,34 @@ public class ReservarCancelarHorarioFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Agenda agendaDia = dataSnapshot.getValue(Agenda.class);
 
-                if (agendaDia != null) {
+                boolean agendaCriadaAgora = false;
+
+                if (agendaDia == null) {
+                    FirebaseUtils.getReferenceChild(SalaoVitinhoConstants.AGENDA, profissional, diaAgendamentoSemBarras).removeEventListener(this);
+                    Agenda agenda = new Agenda();
+
+                    agenda.setDia(diaAgendamentoSemBarras);
+                    agenda.setPrimeiraHoraFim("");
+                    agenda.setPrimeiraHoraInicio("");
+                    agenda.setSegundaHoraFim("");
+                    agenda.setSegundaHoraInicio("");
+                    agenda.setCancelada(false);
+                    agenda.setHoraPadrao(true);
+                    FirebaseUtils.getReferenceChild(SalaoVitinhoConstants.AGENDA, SalaoVitinhoConstants.VITINHO, diaAgendamentoSemBarras)
+                        .setValue(agenda);
+
+                    agendaDia = agenda;
+                    agendaCriadaAgora = true;
+                }
+
+                trataElementosTela();
+
+                if (agendaCriadaAgora) {
+                    montaHorariosIntervaloHorarioAtendimento(agendaDia);
+                }
+                else {
                     if (!agendaDia.getCancelada()) {
-                        trataElementosTela();
-                        if (!agendaDia.getHoraPadrao()) {
-                            montaHorariosIntervaloHorarioAtendimento(agendaDia);
-                        }
+                        montaHorariosIntervaloHorarioAtendimento(agendaDia);
                         buscaDadosBanco(profissional, diaAgendamentoSemBarras);
                     }
                     else {
@@ -115,28 +132,7 @@ public class ReservarCancelarHorarioFragment extends Fragment {
                         SalaoVitinhoUtils.insereMensagemLayout(context, linearLayout, "SUA AGENDA ESTÁ CANCELADA\n PARA O DIA!");
                     }
                 }
-                else {
-                    FirebaseUtils.getReferenceChild(SalaoVitinhoConstants.AGENDA, profissional, diaAgendamentoSemBarras).removeEventListener(this);
-                    LinearLayout linearLayout = view.findViewById(R.id.reservar_cancelar_Agendamentos);
-                    SalaoVitinhoUtils.insereMensagemLayout(context, linearLayout, "VOCÊ AINDA NÃO CRIOU A AGENDA PARA O DIA!");
-                    linearLayout.setGravity(Gravity.CENTER);
-
-                    Button botao =  new Button(context);
-                    botao.setText("CRIAR AGENDA");
-                    botao.setTextColor(Color.WHITE);
-                    botao.setLayoutParams(new LinearLayout.LayoutParams(600, 150));
-                    botao.setBackground(ContextCompat.getDrawable(context, round_button));
-                    botao.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            FragmentManager fragmentManager = getFragmentManager();
-                            fragmentManager.beginTransaction().replace(R.id.conteudo,
-                                    new AgendaFragment()).commit();
-
-                        }
-                    });
-                    linearLayout.addView(botao);
-                }}
+            }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
